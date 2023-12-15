@@ -1,0 +1,70 @@
+extends layout
+
+block content
+  .container
+    .media-details(style='text-align: left;')
+      h1(style='color: #ffd700; text-align: center;') #{media.title}
+      img(src=media.poster, alt='poster', style='max-width: 100%; height: auto; margin: 0 auto; display: block;')
+      h4(style='color: #ddd;') Release Date: #{media.release_date}
+      h4(style='color: #ddd;') Summary: #{media.description}
+      h4(style='color: #ddd;') Rating: #{media.rating}
+
+      if media.directors && media.directors.length > 0
+        h3(style='color: #ffd700;') Directors
+        ul
+          each director in media.directors
+            li(style='color: #ddd;')= director
+
+      if media.genres && media.genres.length > 0
+        h3(style='color: #ffd700;') Genres
+        ul
+          each genre in media.genres
+            li(style='color: #ddd;')= genre
+
+      if media.total_seasons && media.total_episodes
+        h4(style='color: #ffd700;') Total Seasons and Episodes
+        p(style='color: #ddd;') Total Seasons: #{media.total_seasons}
+        p(style='color: #ddd;') Total Episodes: #{media.total_episodes}
+
+      if isAuthenticated 
+        h3(style='color: #ffd700; text-align: left;') Watching Status
+
+        if status != 'watched'
+          a(href = `/media/${media._id}/add/watched`, style='color: #ffd700; text-decoration: none;') Watched 
+        else
+          p(style='color: #ddd; margin-bottom: 0;') Watched
+        br
+        if status != 'watching'
+          a(href = `/media/${media._id}/add/watching`, style='color: #ffd700; text-decoration: none;') Watching 
+        else 
+          p(style='color: #ddd; margin-bottom: 0;') Watching
+        br
+        if status != 'plantowatch'
+          a(href= `/media/${media._id}/add/plantowatch`, style='color: #ffd700; text-decoration: none;') Plan To Watch
+        else 
+          p(style='color: #ddd; margin-bottom: 0;') Plan To Watch
+        br
+        if status != null
+          a(href= `/media/${media._id}/remove`, style='color: #ffd700; text-decoration: none;') Remove
+
+        br
+        br
+        h3(style='color: #ffd700; text-align: left;') Leave a Review:
+        form(action=`/media/${media._id}/addReview`, method='POST', class='review-form' style='text-align: left;')
+          label(for='rating', style='color: #ffd700;') Rating (1-10):
+          input(type='number', name='rating', min='1', max='10', style='width: 100%; padding: 10px; font-size: 16px; border: 1px solid #4d4d4d; border-radius: 5px; background-color: #333; color: #fff; margin-bottom: 10px;')
+          br
+          label(for='reviewString', style='color: #ffd700;') Comments:
+          textarea(name='reviewString', rows='4', cols='50', required, style='width: 100%; padding: 10px; font-size: 16px; border: 1px solid #4d4d4d; border-radius: 5px; background-color: #333; color: #fff; margin-bottom: 10px;')
+          br
+          button(type='submit', style='background-color: #ffd700; color: #333; padding: 10px 20px; font-size: 18px; border: none; border-radius: 5px; cursor: pointer;') Add Review 
+        br
+
+      h3(style='color: #ffd700; text-align: left;') User Submitted Reviews:
+      ul(style='text-align: left;')
+        each review in reviews  
+            p(style='color: #ffd700;') #{review.username}
+            p(style='color: #ddd;') Rating: #{review.rating}
+            p(style='color: #ddd;') #{review.reviewString} 
+            br
+            
